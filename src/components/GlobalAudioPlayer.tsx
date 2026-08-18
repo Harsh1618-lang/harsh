@@ -20,6 +20,7 @@ import {
 export function GlobalAudioPlayer() {
   const {
     currentSong,
+    closeSong,
     isPlaying,
     togglePlay,
     nextSong,
@@ -129,7 +130,18 @@ export function GlobalAudioPlayer() {
           }}
         />
 
-        <div className="glass-panel rounded-3xl p-3 sm:p-4 border border-emerald-500/40 shadow-[0_0_30px_rgba(0,255,136,0.2)] bg-[#07151a]/95 backdrop-blur-2xl flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="relative glass-panel rounded-3xl p-3 sm:p-4 border border-emerald-500/40 shadow-[0_0_30px_rgba(0,255,136,0.2)] bg-[#07151a]/95 backdrop-blur-2xl flex flex-col sm:flex-row items-center justify-between gap-3">
+          {/* Dismiss button — there was previously no way to get rid of
+              this persistent mini player once a song started (pausing
+              still leaves the card on screen); this closes it outright. */}
+          <button
+            onClick={closeSong}
+            aria-label="Close player"
+            className="absolute -top-2.5 -right-2.5 w-6 h-6 rounded-full bg-[#0c1f26] border border-emerald-500/40 flex items-center justify-center text-gray-400 hover:text-white hover:bg-red-500/80 hover:border-red-400 transition-colors shadow-lg z-10"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+
           {/* Track Info */}
           <div className="flex items-center gap-3 w-full sm:w-1/3">
             <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-emerald-400/40 flex-shrink-0">

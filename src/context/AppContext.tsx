@@ -77,6 +77,7 @@ interface AppContextType {
 
   // Music Player
   currentSong: Song | null;
+  closeSong: () => void;
   isPlaying: boolean;
   songList: Song[];
   setSongList: (songs: Song[]) => void;
@@ -356,6 +357,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setThemeConfig((prev) => ({ ...prev, ...config }));
   };
 
+  // Fully dismisses the persistent mini player — clears currentSong (which
+  // is what GlobalAudioPlayer checks via `if (!currentSong) return null` to
+  // decide whether to render at all) and stops playback, rather than just
+  // pausing. Pausing alone would leave the mini player card sitting on
+  // screen with no way to get rid of it, which is exactly the gap this
+  // closes: there was previously no dismiss control on the player itself,
+  // only on its queue panel.
+  const closeSong = () => {
+    setIsPlaying(false);
+    setCurrentSong(null);
+  };
+
   const playSong = (song: Song) => {
     setCurrentSong(song);
     setIsPlaying(true);
@@ -449,6 +462,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         resetUserFontColor,
         hasUserFontColorOverride,
         currentSong,
+        closeSong,
         isPlaying,
         songList,
         setSongList,
