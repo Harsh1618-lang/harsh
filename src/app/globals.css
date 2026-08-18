@@ -1,0 +1,421 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --primary: #00ff88;
+    --secondary: #00f0ff;
+    --bg-dark: #060d0f;
+    --bg-card: rgba(10, 25, 28, 0.75);
+    --border-glow: rgba(0, 255, 136, 0.35);
+    --glow-color: rgba(0, 255, 136, 0.4);
+    /* Admin (Theme & Fonts > Site Default Text/Font Color) and/or the
+       visitor's own personal override both write to this single variable —
+       see AppContext.tsx for the resolution order (personal choice wins,
+       falling back to the site-wide admin default, falling back to this). */
+    --text-color: #f3f4f6;
+
+    /* Measured, JS-reported safe-area offsets (see BottomFloatingNav.tsx and
+       GlobalAudioPlayer.tsx) used to reliably stack the AI Assistant and
+       Support/Donate floating buttons above whatever bottom UI is currently
+       visible, instead of guessing with hardcoded breakpoint classes. */
+    --safe-area-bottom-nav: 96px;
+    --safe-area-audio-player: initial;
+  }
+
+  html {
+    /* Horizontal-scroll guard. See the `body` rule below for why it's on
+       BOTH html and body. */
+    overflow-x: hidden;
+  }
+
+  body {
+    background-color: var(--bg-dark);
+    color: var(--text-color);
+    font-family: var(--font-active, 'Outfit', 'Inter', sans-serif);
+    /* `clip`, not `hidden`, deliberately. Both visually stop horizontal
+       overflow, but `overflow: hidden` on <body> creates a scroll-container
+       side effect that some mobile browser engines mishandle for
+       `position: fixed` descendants — that's what broke `position: sticky`
+       on the header earlier (fixed by moving overflow-x:hidden to <html>),
+       and re-adding it to body (as a defensive measure against horizontal
+       clipping of the right-edge floating buttons) turned out to break tap
+       hit-testing on the fixed header instead. `overflow-x: clip` clips the
+       same way without establishing that problematic scroll container, so
+       it avoids both failure modes at once. */
+    overflow-x: clip;
+    max-width: 100%;
+  }
+}
+
+/* Glassmorphism Classes — shadow glow intensity + corner radius are
+   driven by admin-configurable CSS variables (Theme Builder: Shadow, Radius) */
+.glass-panel {
+  background: rgba(12, 27, 34, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  border-radius: var(--radius-scale, 1.5rem);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, calc(var(--shadow-intensity, 0.4) * 0.9)),
+    0 0 calc(var(--shadow-intensity, 0.4) * 40px) var(--glow-color, rgba(0, 255, 136, 0.4));
+}
+
+.glass-card {
+  background: linear-gradient(
+    135deg,
+    rgba(15, 30, 38, 0.8) 0%,
+    rgba(8, 18, 23, 0.85) 100%
+  );
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 255, 136, 0.18);
+  border-radius: var(--radius-scale, 1.5rem);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, calc(var(--shadow-intensity, 0.4) * 1));
+  transition: all calc(0.3s / var(--anim-speed, 1)) cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+  border-color: rgba(0, 255, 136, 0.5);
+  box-shadow: 0 8px 30px var(--glow-color, rgba(0, 255, 136, 0.25));
+  transform: translateY(-2px);
+}
+
+.glass-pill {
+  background: rgba(10, 25, 32, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  border-radius: var(--radius-scale, 1.5rem);
+  box-shadow: 0 0 calc(var(--shadow-intensity, 0.4) * 38px) var(--glow-color, rgba(0, 255, 136, 0.15));
+}
+
+.glow-text-green {
+  color: #00ff88;
+  text-shadow: 0 0 10px rgba(0, 255, 136, 0.6), 0 0 20px rgba(0, 255, 136, 0.3);
+}
+
+.glow-text-cyan {
+  color: #00f0ff;
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.6), 0 0 20px rgba(0, 240, 255, 0.3);
+}
+
+/* Animated Ring around Avatar */
+@keyframes ringSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.ring-animated {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  padding: 3px;
+  background: conic-gradient(
+    from 0deg,
+    var(--primary, #00ff88),
+    var(--secondary, #00f0ff),
+    transparent 60%,
+    var(--primary, #00ff88) 100%
+  );
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
+  animation: ringSpin 6s linear infinite;
+}
+
+/* Grid Background Grid lines */
+.bg-grid-pattern {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(0, 255, 136, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 255, 136, 0.05) 1px, transparent 1px);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #060d0f;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 136, 0.3);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 255, 136, 0.6);
+}
+
+/* Floating Particles */
+@keyframes floatParticle {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-20px) translateX(10px);
+    opacity: 0.8;
+  }
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  background: #00ff88;
+  filter: blur(1px);
+  animation: floatParticle 5s ease-in-out infinite;
+}
+
+/* Hide scrollbars for horizontal category pill rows, while keeping scroll */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Respect the admin-configurable animation-speed CSS variable */
+.ring-animated {
+  animation-duration: calc(6s / var(--anim-speed, 1));
+}
+
+/* Skeleton shimmer loader (used while API data is loading) */
+@keyframes shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 255, 136, 0.05) 0%,
+    rgba(0, 255, 136, 0.15) 50%,
+    rgba(0, 255, 136, 0.05) 100%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+/* Button ripple / press feedback */
+.btn-ripple {
+  position: relative;
+  overflow: hidden;
+}
+.btn-ripple:active::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.35) 0%, transparent 70%);
+  animation: rippleFade 0.5s ease-out;
+}
+@keyframes rippleFade {
+  from {
+    opacity: 1;
+    transform: scale(0.4);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+
+/* Scroll-reveal helper (paired with ScrollReveal.tsx IntersectionObserver) */
+.reveal-hidden {
+  opacity: 0;
+  transform: translateY(24px);
+}
+.reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Note: per-component transition speeds already respect Tailwind's
+   duration-* utilities; the --anim-speed variable is applied selectively
+   (e.g. .ring-animated) rather than globally, to avoid unintended
+   transitions/perf issues on every DOM element. */
+
+/* ============================================================
+   LIGHT MODE (Header "Theme Toggle")
+   ============================================================
+   Toggled via the Sun/Moon button in the Navbar. AppContext adds/removes
+   the `light-mode` class on <html> and persists the choice to localStorage.
+
+   How this works site-wide with zero per-component rewrites:
+   Tailwind v4 compiles color utilities (text-white, text-gray-400,
+   border-slate-700, bg-emerald-950/40, placeholder-gray-400, accent-*, …)
+   to reference shared CSS custom properties such as `var(--color-gray-400)`.
+   Redefining those exact variables under `html.light-mode` therefore
+   automatically re-colors every one of those utilities across the entire
+   site (Navbar, Hero, About, Courses, Music, Apps, Contact, Footer, all
+   modals, and the whole Admin Panel) consistently and reliably.
+
+   For the handful of components using literal arbitrary hex backgrounds
+   (e.g. bg-[#071318] modal panels), the selectors below intentionally
+   compound `html.light-mode` with the original class (e.g.
+   `html.light-mode .bg-\[\#071318\]`). That compound selector has higher
+   specificity (0,2,1) than Tailwind's own single-class utility (0,1,0),
+   so it reliably wins even though the build tool places both rules in the
+   same `@layer utilities` block — no `!important` needed anywhere.
+   ============================================================ */
+html.light-mode {
+  /* Keeps the page background light even before React hydrates */
+  --bg-dark: #f6f8fa;
+  --bg-card: rgba(255, 255, 255, 0.75);
+
+  color-scheme: light;
+
+  /* Core text tokens: flips ~140 `text-white` headings/body copy to dark,
+     and turns subtle `bg-white/[0.02-0.1]` glass overlays into subtle
+     dark-tinted overlays (the correct equivalent effect on a light card). */
+  --color-white: #0f172a;
+
+  /* Secondary/meta text ladder (text-gray-100…500) */
+  --color-gray-100: #0f172a;
+  --color-gray-200: #1e293b;
+  --color-gray-300: #334155;
+  --color-gray-400: #475569;
+  --color-gray-500: #64748b;
+
+  /* Backgrounds/borders that were dark washes on dark surfaces
+     (bg-gray-700/800, border-gray-600, bg-slate-900, border-slate-700/800) */
+  --color-gray-600: #cbd5e1;
+  --color-gray-700: #e2e8f0;
+  --color-gray-800: #eef2f6;
+  --color-slate-700: #dbe3ea;
+  --color-slate-800: #e9eef3;
+  --color-slate-900: #f1f5f9;
+
+  /* Subtle brand-tinted card washes (bg-emerald-950/20…60, to-teal-950/30) */
+  --color-emerald-950: #ecfdf5;
+  --color-teal-950: #f0fdfa;
+
+  /* Accent text contrast boost for AA-legible green on a white surface */
+  --color-emerald-300: #047857;
+  --color-emerald-400: #059669;
+
+  /* Other accent text colors darkened slightly for contrast on white */
+  --color-red-300: #b91c1c;
+  --color-red-400: #dc2626;
+  --color-pink-400: #db2777;
+  --color-purple-400: #7e22ce;
+  --color-amber-400: #b45309;
+  --color-cyan-400: #0e7490;
+  --color-sky-400: #0369a1;
+}
+
+/* Body/page base background (see layout.tsx — applied inline so it always
+   wins the cascade and reacts instantly to the --bg-dark variable above). */
+html.light-mode body {
+  color: #0f172a;
+}
+
+/* Glassmorphism surfaces */
+html.light-mode .glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(16, 185, 129, 0.25);
+  box-shadow: 0 8px 32px 0 rgba(15, 23, 42, calc(var(--shadow-intensity, 0.4) * 0.18)),
+    0 0 calc(var(--shadow-intensity, 0.4) * 40px) var(--glow-color, rgba(0, 255, 136, 0.18));
+}
+
+html.light-mode .glass-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(240, 253, 244, 0.85) 100%);
+  border-color: rgba(16, 185, 129, 0.22);
+  box-shadow: 0 4px 20px rgba(15, 23, 42, calc(var(--shadow-intensity, 0.4) * 0.12));
+}
+
+html.light-mode .glass-card:hover {
+  border-color: rgba(16, 185, 129, 0.45);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
+}
+
+html.light-mode .glass-pill {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+/* Header / Navbar surfaces */
+html.light-mode .bg-\[\#08141a\]\/85 {
+  background-color: rgba(255, 255, 255, 0.85);
+}
+html.light-mode .bg-\[\#08141a\]\/95 {
+  background-color: rgba(255, 255, 255, 0.97);
+}
+
+/* Bottom floating nav */
+html.light-mode .bg-\[\#07131a\]\/92 {
+  background-color: rgba(255, 255, 255, 0.92);
+}
+
+/* Global audio player bar + queue drawer */
+html.light-mode .bg-\[\#07151a\]\/95 {
+  background-color: rgba(255, 255, 255, 0.96);
+}
+html.light-mode .bg-\[\#07151a\]\/98 {
+  background-color: rgba(255, 255, 255, 0.98);
+}
+
+/* Modal panels: Admin Panel, Apps Sheet, Donation Modal, Legal Modal, Video Player */
+html.light-mode .bg-\[\#071318\] {
+  background-color: #ffffff;
+}
+html.light-mode .bg-\[\#09171c\] {
+  background-color: #f8fafc;
+}
+html.light-mode .bg-\[\#0a181d\] {
+  background-color: #f8fafc;
+}
+html.light-mode .bg-\[\#0a1b20\]\/90 {
+  background-color: rgba(255, 255, 255, 0.92);
+}
+
+/* Hero section surfaces */
+html.light-mode .bg-\[\#09181c\] {
+  background-color: #eef2f5;
+}
+html.light-mode .bg-\[\#0b1a20\]\/80 {
+  background-color: rgba(255, 255, 255, 0.85);
+}
+
+/* Footer */
+html.light-mode .bg-\[\#040a0c\]\/90 {
+  background-color: rgba(255, 255, 255, 0.95);
+}
+
+/* Page loader splash screen */
+html.light-mode .bg-\[\#050b0d\] {
+  background-color: #ffffff;
+}
+
+/* AI Chat launcher notification-dot cutout ring (matches page bg) */
+html.light-mode .border-\[\#060d0f\] {
+  border-color: #ffffff;
+}
+
+/* Borders that were tuned for dark surfaces (theme swatch dots, dividers) */
+html.light-mode .border-white\/10,
+html.light-mode .border-white\/20,
+html.light-mode .border-white\/30 {
+  border-color: rgba(15, 23, 42, 0.12);
+}
+
+/* Custom scrollbar on light backgrounds */
+html.light-mode ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+/* Selection color stays legible on white */
+html.light-mode ::selection {
+  background: rgba(16, 185, 129, 0.25);
+  color: #065f46;
+}
