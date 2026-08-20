@@ -991,13 +991,13 @@ export function AdminPanel() {
             {/* Main Admin Content Body */}
             <div className="p-4 sm:p-6 flex-grow overflow-y-auto space-y-6">
               {successMsg && (
-                <div className="p-3 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-400 text-xs font-bold flex items-center gap-2 animate-in fade-in">
+                <div className="sticky top-0 z-20 p-3 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-400 text-xs font-bold flex items-center gap-2 animate-in fade-in shadow-lg backdrop-blur-md">
                   <CheckCircle2 className="w-4 h-4" />
                   <span>{successMsg}</span>
                 </div>
               )}
               {errorMsg && (
-                <div className="p-3 rounded-xl bg-red-500/20 text-red-300 border border-red-400 text-xs font-bold flex items-center gap-2 animate-in fade-in">
+                <div className="sticky top-0 z-20 p-3 rounded-xl bg-red-500/20 text-red-300 border border-red-400 text-xs font-bold flex items-center gap-2 animate-in fade-in shadow-lg backdrop-blur-md">
                   <AlertTriangle className="w-4 h-4 flex-shrink-0" />
                   <span>{errorMsg}</span>
                 </div>
